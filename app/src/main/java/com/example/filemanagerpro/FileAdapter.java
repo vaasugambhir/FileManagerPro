@@ -166,7 +166,7 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.FileViewHolder
                             mContext.startActivity(intent);
                             break;
                         }
-                        case "mp4":
+                        case "mp4": {
                             File file = new File(mPaths.get(position));
                             Uri uri = FileProvider.getUriForFile(mContext, mContext.getPackageName() + ".provider", file);
                             Intent intent = new Intent(Intent.ACTION_VIEW);
@@ -174,9 +174,47 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.FileViewHolder
                             intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                             mContext.startActivity(intent);
                             break;
-                        default:
+                        }
+                        case "pptx":
+
+                        case "ppt": {
+                            File file = new File(mPaths.get(position));
+                            Uri uri = FileProvider.getUriForFile(mContext, mContext.getPackageName() + ".provider", file);
+                            Intent intent = new Intent(Intent.ACTION_VIEW);
+                            intent.setDataAndType(uri, "application/vnd.ms-powerpoint");
+                            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                            mContext.startActivity(intent);
+                            break;
+                        }
+                        case "txt":
+
+                        case "docx":
+
+                        case "doc": {
+                            File file = new File(mPaths.get(position));
+                            Uri uri = FileProvider.getUriForFile(mContext, mContext.getPackageName() + ".provider", file);
+                            Intent intent = new Intent(Intent.ACTION_VIEW);
+                            intent.setDataAndType(uri, "text/*");
+                            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                            mContext.startActivity(intent);
+                            break;
+                        }
+
+                        case "xlsx":
+
+                        case "xls": {
+                            File file = new File(mPaths.get(position));
+                            Uri uri = FileProvider.getUriForFile(mContext, mContext.getPackageName() + ".provider", file);
+                            Intent intent = new Intent(Intent.ACTION_VIEW);
+                            intent.setDataAndType(uri, "application/vnd.ms-excel");
+                            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                            mContext.startActivity(intent);
+                            break;
+                        }
+                        default: {
                             Toast.makeText(mContext, "Sorry, cannot open file type", Toast.LENGTH_SHORT).show();
                             break;
+                        }
                     }
                 }
             }

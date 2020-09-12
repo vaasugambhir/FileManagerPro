@@ -1,17 +1,23 @@
 package com.example.filemanagerpro;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
+import android.os.Vibrator;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.FileProvider;
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -34,7 +40,9 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.FileViewHolder
 
     interface ItemClickListener{
         void onClick(View view, int pos);
+        void onLongClick(View view, int pos);
     }
+
 
     void add(ArrayList<String> names, ArrayList<String> paths, ArrayList<Boolean> isFile) {
         mNames.addAll(names);
@@ -68,21 +76,16 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.FileViewHolder
         final File[] folder = newFile.listFiles();
 
         if (mIsFile.get(position)) {
-            System.out.println(mNames.get(position));
             holder.right.setVisibility(View.GONE);
             holder.file.setVisibility(View.VISIBLE);
             holder.folder.setVisibility(View.GONE);
         }
 
-        System.out.println("---");
-        for (boolean b : mIsFile)
-            System.out.println("F " + b);
-        System.out.println("---");
 
         holder.setListener(new ItemClickListener() {
             @Override
             public void onClick(View view, int position) {
-
+                holder.layout.setBackgroundColor(mContext.getResources().getColor(R.color.colorBg));
                 if (newFile.isDirectory()) {
                     if (Objects.requireNonNull(newFile.listFiles()).length == 0) {
                         Toast.makeText(mContext, "empty", Toast.LENGTH_SHORT).show();
@@ -218,7 +221,21 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.FileViewHolder
                     }
                 }
             }
+
+            @Override
+            public void onLongClick(View view, int pos) {
+                holder.layout.setBackgroundColor(Color.BLACK);
+                ((Vibrator)mContext.getSystemService(Context.VIBRATOR_SERVICE)).vibrate(50);
+                openDialog(view, pos);
+
+            }
         });
+    }
+
+    private void openDialog(View view, int pos) {
+        FragmentManager fragmentManager = ((FragmentActivity) view.getContext()).getSupportFragmentManager();
+        OptionsDialog optionsDialog = new OptionsDialog(pos, view.getContext(), mPaths.get(pos), mNames.get(pos), adapter);
+        optionsDialog.show(fragmentManager, "options dialog");
     }
 
     @Override
@@ -226,11 +243,12 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.FileViewHolder
         return mNames.size();
     }
 
-    public static class FileViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public static class FileViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
 
         ImageView down, right, file, folder;
         TextView name;
         ItemClickListener listener;
+        LinearLayout layout;
 
         public FileViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -240,16 +258,24 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.FileViewHolder
             right = itemView.findViewById(R.id.right_img);
             file = itemView.findViewById(R.id.file);
             folder = itemView.findViewById(R.id.folder);
+            layout = itemView.findViewById(R.id.layer);
         }
 
         public void setListener(ItemClickListener listener) {
             this.listener = listener;
             itemView.setOnClickListener(this);
+            itemView.setOnLongClickListener(this);
         }
 
         @Override
         public void onClick(View v) {
             listener.onClick(v, getAdapterPosition());
+        }
+
+        @Override
+        public boolean onLongClick(View v) {
+            listener.onLongClick(v, getAdapterPosition());
+            return true;
         }
     }
 }

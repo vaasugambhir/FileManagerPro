@@ -8,18 +8,24 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.view.View;
+import android.widget.Button;
+import android.widget.Toast;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements OptionsDialog.OptionsDialogListener {
 
     private RecyclerView mList;
     private FileAdapter adapter;
     private ArrayList<String> mNames, mPaths;
     private ArrayList<Boolean> mIsFile;
+    private Button[] buttons;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,20 +37,21 @@ public class MainActivity extends AppCompatActivity {
         mList = findViewById(R.id.list);
         mIsFile = new ArrayList<>();
         adapter = new FileAdapter(this);
+        buttons = new Button[4];
+        for (int i = 0; i < 4; i++) {
+            String id = "button" + i;
+            int resID = getResources().getIdentifier(id, "id", getPackageName());
+            buttons[i] = findViewById(resID);
+        }
 
         check();
         getFiles();
         declare();
     }
 
+
+
     private void declare() {
-        /*
-        mList.setLayoutManager(new LinearLayoutManager(this));
-        adapter.add(mNames, mPaths, mIsFile);
-        mList.setAdapter(adapter);
-
-
-         */
         mList.setHasFixedSize(true);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
         mList.setLayoutManager(layoutManager);
@@ -66,22 +73,39 @@ public class MainActivity extends AppCompatActivity {
             if (file.getName().charAt(0) != '.') {
                 mNames.add(file.getName());
                 mPaths.add(file.getPath());
-                if ((new File(mPaths.get(mPaths.size() - 1))).isFile()) {
-                    mIsFile.add(true);
-                }
-                else
-                    mIsFile.add(false);
+                if ((new File(mPaths.get(mPaths.size() - 1))).isFile()) mIsFile.add(true);
+                else mIsFile.add(false);
             }
         }
-        for (boolean b : mIsFile)
-            System.out.println(b);
-        System.out.println(mIsFile.size());
-        System.out.println(mPaths.size());
-        System.out.println(mNames.size());
     }
 
     public boolean checkPerm (String perm) {
         int check = ContextCompat.checkSelfPermission(this, perm);
         return (check == PackageManager.PERMISSION_GRANTED);
+    }
+
+    @Override
+    public void applyX(int X, int pos, String path, String names, FileAdapter adapter) throws IOException {
+        switch (X) {
+            case 0: {
+                delete(pos, path, names, adapter);
+            }
+        }
+    }
+    private void delete(int pos, String p, String n, FileAdapter adapter1) throws IOException {
+        File file = new File(p);
+        if (!file.exists()) {
+            Toast.makeText(this, "DNE", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        System.out.println(n + " " + p);
+        if (file.delete()) {
+            Toast.makeText(this, n + " got deleted", Toast.LENGTH_SHORT).show();
+        }
+        else {
+            Toast.makeText(this, "deletion failed", Toast.LENGTH_SHORT).show();
+            throw new IOException("failed to delete " + file);
+        }
+
     }
 }

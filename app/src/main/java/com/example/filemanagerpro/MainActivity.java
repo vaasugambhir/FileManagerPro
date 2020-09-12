@@ -21,9 +21,7 @@ public class MainActivity extends AppCompatActivity {
     private FileAdapter adapter;
     private ArrayList<String> mNames, mPaths;
 
-    interface ItemClickListener{
-        void onClick(View view, int pos);
-    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

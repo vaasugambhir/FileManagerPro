@@ -20,6 +20,10 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.FileViewHolder
     private ArrayList<String> mNames = new ArrayList<>();
     private ArrayList<String> mPaths = new ArrayList<>();
 
+    interface ItemClickListener{
+        void onClick(View view, int pos);
+    }
+
     void add(ArrayList<String> names, ArrayList<String> paths) {
         mNames = names;
         mPaths = paths;
@@ -40,11 +44,12 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.FileViewHolder
     @Override
     public void onBindViewHolder(@NonNull final FileViewHolder holder, int position) {
         holder.name.setText(mNames.get(position));
-
+        /*
         if (new File(mPaths.get(position)).isFile()) {
             holder.right.setVisibility(View.GONE);
         }
-        holder.setListener(new MainActivity.ItemClickListener() {
+         */
+        holder.setListener(new ItemClickListener() {
             @Override
             public void onClick(View view, int pos) {
                 File newFile = new File(mPaths.get(pos));
@@ -93,7 +98,7 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.FileViewHolder
         ImageView down, right;
         TextView name;
         RecyclerView insideRecyclerView;
-        MainActivity.ItemClickListener listener;
+        ItemClickListener listener;
 
         public FileViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -104,7 +109,7 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.FileViewHolder
             insideRecyclerView = itemView.findViewById(R.id.inside_rec);
         }
 
-        public void setListener(MainActivity.ItemClickListener listener) {
+        public void setListener(ItemClickListener listener) {
             this.listener = listener;
             itemView.setOnClickListener(this);
         }

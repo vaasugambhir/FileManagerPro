@@ -1,5 +1,6 @@
 package com.example.filemanagerpro;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -7,6 +8,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Environment;
@@ -19,6 +21,13 @@ public class MainActivity extends AppCompatActivity {
 
     private RecyclerView mList;
     private FileAdapter adapter;
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        adapter.onActivityResult(requestCode, resultCode, data);
+    }
+
     private ArrayList<String> mNames, mPaths;
     private ArrayList<Boolean> mIsFile;
 

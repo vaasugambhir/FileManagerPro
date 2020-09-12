@@ -1,6 +1,9 @@
 package com.example.filemanagerpro;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,6 +12,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.FileProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -108,10 +112,59 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.FileViewHolder
                     }
                 }
                 else {
-                    Toast.makeText(mContext, mNames.get(pos), Toast.LENGTH_SHORT).show();
+                    String x = mNames.get(pos);
+                    String y = x.substring(x.lastIndexOf('.')+1);
+                    switch (y.toLowerCase()) {
+                        case "pdf": {
+                            File file = new File(mPaths.get(pos));
+                            Uri uri = FileProvider.getUriForFile(mContext, mContext.getPackageName() + ".provider", file);
+                            Intent intent = new Intent(Intent.ACTION_VIEW);
+                            intent.setDataAndType(uri, "application/pdf");
+                            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                            mContext.startActivity(intent);
+                            break;
+                        }
+                        case "jpg":
+
+                        case "jpeg":
+
+                        case "png": {
+                            File file = new File(mPaths.get(pos));
+                            Uri uri = FileProvider.getUriForFile(mContext, mContext.getPackageName() + ".provider", file);
+                            Intent intent = new Intent(Intent.ACTION_VIEW);
+                            intent.setDataAndType(uri, "image/*");
+                            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                            mContext.startActivity(intent);
+                            break;
+                        }
+                        case "mp3": {
+                            File file = new File(mPaths.get(pos));
+                            Uri uri = FileProvider.getUriForFile(mContext, mContext.getPackageName() + ".provider", file);
+                            Intent intent = new Intent(Intent.ACTION_VIEW);
+                            intent.setDataAndType(uri, "audio/*");
+                            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                            mContext.startActivity(intent);
+                            break;
+                        }
+                        case "mp4":
+                            File file = new File(mPaths.get(pos));
+                            Uri uri = FileProvider.getUriForFile(mContext, mContext.getPackageName() + ".provider", file);
+                            Intent intent = new Intent(Intent.ACTION_VIEW);
+                            intent.setDataAndType(uri, "video/*");
+                            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                            mContext.startActivity(intent);
+                            break;
+                        default:
+                            Toast.makeText(mContext, "Sorry, cannot open file type", Toast.LENGTH_SHORT).show();
+                            break;
+                    }
                 }
             }
         });
+    }
+
+    public  void onActivityResult(int requestCode, int resultCode, Intent data) {
+
     }
 
     @Override

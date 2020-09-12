@@ -1,6 +1,5 @@
 package com.example.filemanagerpro;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -32,7 +31,6 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.FileViewHolder
     private RecyclerView.LayoutManager layoutManager;
     private RecyclerView recyclerView;
     private FileAdapter adapter;
-    private View mView;
 
     interface ItemClickListener{
         void onClick(View view, int pos);
@@ -53,7 +51,6 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.FileViewHolder
     public FileViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(mContext);
         View v = inflater.inflate(R.layout.file_layout, parent, false);
-        mView = v;
         return new FileViewHolder(v);
     }
 

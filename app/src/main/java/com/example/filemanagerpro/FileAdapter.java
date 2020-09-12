@@ -58,15 +58,17 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.FileViewHolder
     }
 
     @Override
+    public int getItemViewType(int position) {
+        return super.getItemViewType(position);
+    }
+
+    @Override
     public void onBindViewHolder(@NonNull final FileViewHolder holder, final int position) {
         holder.setIsRecyclable(false);
         String n = mNames.get(position);
         holder.name.setText(n);
         final File newFile = new File(mPaths.get(position));
         final File[] folder = newFile.listFiles();
-
-        //recyclerView.getRecycledViewPool().setMaxRecycledViews(TYPE_CAROUSEL, 0);
-
 
         if (mIsFile.get(position)) {
             System.out.println(mNames.get(position));

@@ -36,7 +36,7 @@
             android:layout_height="20sp"
             android:layout_gravity="center"
             android:id="@+id/folder"
-            android:visibility="visible"
+            android:visibility="gone"
             android:src="@drawable/folder"/>
 
         <ImageView

@@ -55,8 +55,10 @@ public class MainActivity extends AppCompatActivity {
         File[] files = root.listFiles();
         assert files != null;
         for (File file : files) {
-            mNames.add(file.getName());
-            mPaths.add(file.getAbsolutePath());
+            if (file.getName().charAt(0) != '.') {
+                mNames.add(file.getName());
+                mPaths.add(file.getAbsolutePath());
+            }
         }
     }
 

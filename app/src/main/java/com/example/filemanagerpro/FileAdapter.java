@@ -1,6 +1,7 @@
 package com.example.filemanagerpro;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,14 +44,13 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.FileViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull final FileViewHolder holder, int position) {
-        holder.name.setText(mNames.get(position));
-
+        String n = mNames.get(position);
+        holder.name.setText(n);
+        /*
         if ((new File(mPaths.get(position))).isFile()) {
             holder.right.setVisibility(View.GONE);
-            holder.folder.setVisibility(View.GONE);
-            holder.file.setVisibility(View.VISIBLE);
         }
-
+         */
         holder.setListener(new ItemClickListener() {
             @Override
             public void onClick(View view, int pos) {

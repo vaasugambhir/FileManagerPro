@@ -19,14 +19,16 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.FileViewHolder
     private final Context mContext;
     private ArrayList<String> mNames = new ArrayList<>();
     private ArrayList<String> mPaths = new ArrayList<>();
+    private ArrayList<Boolean> mIsFile = new ArrayList<>();
 
     interface ItemClickListener{
         void onClick(View view, int pos);
     }
 
-    void add(ArrayList<String> names, ArrayList<String> paths) {
+    void add(ArrayList<String> names, ArrayList<String> paths, ArrayList<Boolean> isFile) {
         mNames = names;
         mPaths = paths;
+        mIsFile = isFile;
     }
 
     FileAdapter(Context context) {
@@ -45,11 +47,15 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.FileViewHolder
     public void onBindViewHolder(@NonNull final FileViewHolder holder, int position) {
         String n = mNames.get(position);
         holder.name.setText(n);
-        /*
-        if ((new File(mPaths.get(position))).isFile()) {
+
+        if (mIsFile.get(position)) {
+            System.out.println(mNames.get(position));
             holder.right.setVisibility(View.GONE);
         }
-         */
+        System.out.println("---");
+        for (boolean b : mIsFile)
+            System.out.println("F " + b);
+        System.out.println("---");
         holder.setListener(new ItemClickListener() {
             @Override
             public void onClick(View view, int pos) {
@@ -58,27 +64,36 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.FileViewHolder
                     File[] folder = newFile.listFiles();
                     ArrayList<String> names = new ArrayList<>();
                     ArrayList<String> paths = new ArrayList<>();
+                    ArrayList<Boolean> isFile = new ArrayList<>();
                     assert folder != null;
                     for (File file : folder) {
                         names.add(file.getName());
                         paths.add(file.getAbsolutePath());
+                        if ((new File(paths.get(paths.size() - 1))).isFile()) {
+                            isFile.add(true);
+                        }
+                        else
+                            isFile.add(false);
                     }
+                    for (boolean b : isFile)
+                        System.out.println("S " + b);
                     if (holder.down.getVisibility() == View.GONE && holder.right.getVisibility() == View.VISIBLE) {
                         holder.down.setVisibility(View.VISIBLE);
                         holder.right.setVisibility(View.GONE);
                         holder.insideRecyclerView.setLayoutManager(new LinearLayoutManager(mContext));
                         FileAdapter adap = new FileAdapter(mContext);
-                        adap.add(names, paths);
+                        adap.add(names, paths, isFile);
                         holder.insideRecyclerView.setAdapter(adap);
                     }
                     else if (holder.right.getVisibility() == View.GONE && holder.down.getVisibility() == View.VISIBLE) {
                         names.clear();
                         paths.clear();
+                        isFile.clear();
                         holder.down.setVisibility(View.GONE);
                         holder.right.setVisibility(View.VISIBLE);
                         holder.insideRecyclerView.setLayoutManager(new LinearLayoutManager(mContext));
                         FileAdapter adap = new FileAdapter(mContext);
-                        adap.add(names, paths);
+                        adap.add(names, paths, isFile);
                         holder.insideRecyclerView.setAdapter(adap);
                     }
                     else if (holder.right.getVisibility() == View.GONE && holder.down.getVisibility() == View.GONE) {

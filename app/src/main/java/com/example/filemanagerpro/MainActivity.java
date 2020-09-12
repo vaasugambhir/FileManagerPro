@@ -20,6 +20,7 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView mList;
     private FileAdapter adapter;
     private ArrayList<String> mNames, mPaths;
+    private ArrayList<Boolean> mIsFile;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
         mNames = new ArrayList<>();
         mPaths = new ArrayList<>();
         mList = findViewById(R.id.list);
+        mIsFile = new ArrayList<>();
         adapter = new FileAdapter(this);
 
         check();
@@ -38,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void declare() {
         mList.setLayoutManager(new LinearLayoutManager(this));
-        adapter.add(mNames, mPaths);
+        adapter.add(mNames, mPaths, mIsFile);
         mList.setAdapter(adapter);
     }
 
@@ -56,8 +58,18 @@ public class MainActivity extends AppCompatActivity {
             if (file.getName().charAt(0) != '.') {
                 mNames.add(file.getName());
                 mPaths.add(file.getAbsolutePath());
+                if ((new File(mPaths.get(mPaths.size() - 1))).isFile()) {
+                    mIsFile.add(true);
+                }
+                else
+                    mIsFile.add(false);
             }
         }
+        for (boolean b : mIsFile)
+            System.out.println(b);
+        System.out.println(mIsFile.size());
+        System.out.println(mPaths.size());
+        System.out.println(mNames.size());
     }
 
     public boolean checkPerm (String perm) {

@@ -19,7 +19,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity implements OptionsDialog.OptionsDialogListener {
+public class MainActivity extends AppCompatActivity implements OptionsDialog.OptionsDialogListener, RenameDialog.OnClick {
 
     private RecyclerView mList;
     private FileAdapter adapter;
@@ -90,6 +90,10 @@ public class MainActivity extends AppCompatActivity implements OptionsDialog.Opt
             case 0: {
                 delete(pos, path, names, adapter);
             }
+            case 1: {
+                RenameDialog renameDialog = new RenameDialog(path, names, pos);
+                renameDialog.show(getSupportFragmentManager(), "rename dialog");
+            }
         }
     }
     private void delete(int pos, String p, String n, FileAdapter adapter1) throws IOException {
@@ -106,6 +110,20 @@ public class MainActivity extends AppCompatActivity implements OptionsDialog.Opt
             Toast.makeText(this, "deletion failed", Toast.LENGTH_SHORT).show();
             throw new IOException("failed to delete " + file);
         }
+        adapter.notifyDataSetChanged();
+    }
 
+    @Override
+    public void onClick(String pre_name, String name, String path, int pos) {
+        String s = new File(path).getParent() + "/" + name + pre_name.substring(pre_name.lastIndexOf('.') + 1);
+        File file = new File(s);
+        File old = new File(path);
+        if (old.renameTo(file)) {
+            Toast.makeText(this, pre_name + " renamed to " + name, Toast.LENGTH_SHORT).show();
+        }
+        else {
+            Toast.makeText(this, "file rename failed", Toast.LENGTH_SHORT).show();
+        }
+        adapter.notifyDataSetChanged();
     }
 }

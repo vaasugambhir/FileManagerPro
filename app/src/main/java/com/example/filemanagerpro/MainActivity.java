@@ -114,15 +114,32 @@ public class MainActivity extends AppCompatActivity implements OptionsDialog.Opt
     }
 
     @Override
-    public void onClick(String pre_name, String name, String path, int pos) {
-        String s = new File(path).getParent() + "/" + name + pre_name.substring(pre_name.lastIndexOf('.') + 1);
-        File file = new File(s);
-        File old = new File(path);
-        if (old.renameTo(file)) {
-            Toast.makeText(this, pre_name + " renamed to " + name, Toast.LENGTH_SHORT).show();
+    public void onClick(String pre_name, String name, String oldPath, int pos) {
+
+        File oldFile = new File(oldPath);
+        if (oldFile.isFile()) {
+            String newPath = new File(oldPath).getParent() + "/" + name + pre_name.substring(pre_name.lastIndexOf('.'));
+            System.out.println(oldPath);
+            System.out.println(newPath);
+            File newFile = new File(newPath);
+            if (oldFile.renameTo(newFile)) {
+                Toast.makeText(this, pre_name + " renamed to " + name, Toast.LENGTH_SHORT).show();
+            }
+            else {
+                Toast.makeText(this, "file rename failed", Toast.LENGTH_SHORT).show();
+            }
         }
         else {
-            Toast.makeText(this, "file rename failed", Toast.LENGTH_SHORT).show();
+            String newPath = new File(oldPath).getParent() + "/" + name;
+            System.out.println(oldPath);
+            System.out.println(newPath);
+            File newFile = new File(newPath);
+            if (oldFile.renameTo(newFile)) {
+                Toast.makeText(this, pre_name + " renamed to " + name, Toast.LENGTH_SHORT).show();
+            }
+            else {
+                Toast.makeText(this, "file rename failed", Toast.LENGTH_SHORT).show();
+            }
         }
         adapter.notifyDataSetChanged();
     }

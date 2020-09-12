@@ -1,5 +1,6 @@
 package com.example.filemanagerpro;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -31,6 +32,7 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.FileViewHolder
     private RecyclerView.LayoutManager layoutManager;
     private RecyclerView recyclerView;
     private FileAdapter adapter;
+    private View mView;
 
     interface ItemClickListener{
         void onClick(View view, int pos);
@@ -51,25 +53,33 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.FileViewHolder
     public FileViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(mContext);
         View v = inflater.inflate(R.layout.file_layout, parent, false);
+        mView = v;
         return new FileViewHolder(v);
     }
 
     @Override
     public void onBindViewHolder(@NonNull final FileViewHolder holder, final int position) {
+        holder.setIsRecyclable(false);
         String n = mNames.get(position);
         holder.name.setText(n);
-        /*
+        final File newFile = new File(mPaths.get(position));
+        final File[] folder = newFile.listFiles();
+
+        //recyclerView.getRecycledViewPool().setMaxRecycledViews(TYPE_CAROUSEL, 0);
+
+
         if (mIsFile.get(position)) {
             System.out.println(mNames.get(position));
             holder.right.setVisibility(View.GONE);
+            holder.file.setVisibility(View.VISIBLE);
+            holder.folder.setVisibility(View.GONE);
         }
-         */
+
         System.out.println("---");
         for (boolean b : mIsFile)
             System.out.println("F " + b);
         System.out.println("---");
-        final File newFile = new File(mPaths.get(position));
-        final File[] folder = newFile.listFiles();
+
         holder.setListener(new ItemClickListener() {
             @Override
             public void onClick(View view, int position) {
@@ -80,15 +90,11 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.FileViewHolder
                         return;
                     }
 
-                    //ArrayList<String> names = new ArrayList<>();
-                    //ArrayList<String> paths = new ArrayList<>();
-                    //ArrayList<Boolean> isFile = new ArrayList<>();
-
                     if (holder.down.getVisibility() == View.GONE && holder.right.getVisibility() == View.VISIBLE) {
                         names.clear();
                         isFile.clear();
                         paths.clear();
-                        assert folder != null;
+                        assert folder!=null;
                         for (File file : folder) {
                             names.add(file.getName());
                             paths.add(file.getPath());

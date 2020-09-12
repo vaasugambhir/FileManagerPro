@@ -10,7 +10,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="10dp"
-
         android:foreground="?attr/selectableItemBackgroundBorderless"
         android:orientation="horizontal">
         
@@ -36,7 +35,7 @@
             android:layout_height="20sp"
             android:layout_gravity="center"
             android:id="@+id/folder"
-            android:visibility="gone"
+            android:visibility="visible"
             android:src="@drawable/folder"/>
 
         <ImageView

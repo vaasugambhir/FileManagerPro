@@ -44,11 +44,13 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.FileViewHolder
     @Override
     public void onBindViewHolder(@NonNull final FileViewHolder holder, int position) {
         holder.name.setText(mNames.get(position));
-        /*
-        if (new File(mPaths.get(position)).isFile()) {
+
+        if ((new File(mPaths.get(position))).isFile()) {
             holder.right.setVisibility(View.GONE);
+            holder.folder.setVisibility(View.GONE);
+            holder.file.setVisibility(View.VISIBLE);
         }
-         */
+
         holder.setListener(new ItemClickListener() {
             @Override
             public void onClick(View view, int pos) {
@@ -95,7 +97,7 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.FileViewHolder
 
     public static class FileViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        ImageView down, right;
+        ImageView down, right, file, folder;
         TextView name;
         RecyclerView insideRecyclerView;
         ItemClickListener listener;
@@ -106,6 +108,8 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.FileViewHolder
             name = itemView.findViewById(R.id.file_folder_name);
             down = itemView.findViewById(R.id.down_img);
             right = itemView.findViewById(R.id.right_img);
+            file = itemView.findViewById(R.id.file);
+            folder = itemView.findViewById(R.id.folder);
             insideRecyclerView = itemView.findViewById(R.id.inside_rec);
         }
 

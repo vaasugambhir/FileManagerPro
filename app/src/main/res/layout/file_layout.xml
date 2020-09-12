@@ -15,19 +15,37 @@
         android:orientation="horizontal">
         
         <ImageView
-            android:layout_width="25sp"
-            android:layout_height="25sp"
+            android:layout_width="20sp"
+            android:layout_height="20sp"
             android:layout_gravity="center"
             android:id="@+id/right_img"
+            android:paddingRight="10dp"
             android:src="@drawable/right"/>
 
         <ImageView
             android:layout_width="20sp"
             android:layout_height="20sp"
+            android:paddingRight="10dp"
             android:layout_gravity="center"
             android:id="@+id/down_img"
             android:visibility="gone"
             android:src="@drawable/down"/>
+
+        <ImageView
+            android:layout_width="20sp"
+            android:layout_height="20sp"
+            android:layout_gravity="center"
+            android:id="@+id/folder"
+            android:visibility="visible"
+            android:src="@drawable/folder"/>
+
+        <ImageView
+            android:layout_width="20sp"
+            android:layout_height="20sp"
+            android:layout_gravity="center"
+            android:id="@+id/file"
+            android:visibility="gone"
+            android:src="@drawable/file"/>
         
         <TextView
             android:layout_width="wrap_content"

@@ -1,6 +1,5 @@
 package com.example.filemanagerpro;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -26,15 +25,21 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.FileViewHolder
     private ArrayList<String> mNames = new ArrayList<>();
     private ArrayList<String> mPaths = new ArrayList<>();
     private ArrayList<Boolean> mIsFile = new ArrayList<>();
+    private ArrayList<String> names = new ArrayList<>();
+    private ArrayList<String> paths = new ArrayList<>();
+    private ArrayList<Boolean> isFile = new ArrayList<>();
+    private RecyclerView.LayoutManager layoutManager;
+    private RecyclerView recyclerView;
+    private FileAdapter adapter;
 
     interface ItemClickListener{
         void onClick(View view, int pos);
     }
 
     void add(ArrayList<String> names, ArrayList<String> paths, ArrayList<Boolean> isFile) {
-        mNames = names;
-        mPaths = paths;
-        mIsFile = isFile;
+        mNames.addAll(names);
+        mPaths.addAll(paths);
+        mIsFile.addAll(isFile);
     }
 
     FileAdapter(Context context) {
@@ -63,38 +68,45 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.FileViewHolder
         for (boolean b : mIsFile)
             System.out.println("F " + b);
         System.out.println("---");
+        final File newFile = new File(mPaths.get(position));
+        final File[] folder = newFile.listFiles();
         holder.setListener(new ItemClickListener() {
             @Override
-            public void onClick(View view, int pos) {
-                File newFile = new File(mPaths.get(pos));
+            public void onClick(View view, int position) {
+
                 if (newFile.isDirectory()) {
                     if (Objects.requireNonNull(newFile.listFiles()).length == 0) {
                         Toast.makeText(mContext, "empty", Toast.LENGTH_SHORT).show();
                         return;
                     }
-                    File[] folder = newFile.listFiles();
-                    ArrayList<String> names = new ArrayList<>();
-                    ArrayList<String> paths = new ArrayList<>();
-                    ArrayList<Boolean> isFile = new ArrayList<>();
-                    assert folder != null;
-                    for (File file : folder) {
-                        names.add(file.getName());
-                        paths.add(file.getAbsolutePath());
-                        if ((new File(paths.get(paths.size() - 1))).isFile()) {
-                            isFile.add(true);
-                        }
-                        else
-                            isFile.add(false);
-                    }
-                    for (boolean b : isFile)
-                        System.out.println("S " + b);
+
+                    //ArrayList<String> names = new ArrayList<>();
+                    //ArrayList<String> paths = new ArrayList<>();
+                    //ArrayList<Boolean> isFile = new ArrayList<>();
+
                     if (holder.down.getVisibility() == View.GONE && holder.right.getVisibility() == View.VISIBLE) {
+                        names.clear();
+                        isFile.clear();
+                        paths.clear();
+                        assert folder != null;
+                        for (File file : folder) {
+                            names.add(file.getName());
+                            paths.add(file.getPath());
+                            if ((new File(paths.get(paths.size() - 1))).isFile()) {
+                                isFile.add(true);
+                            }
+                            else
+                                isFile.add(false);
+                        }
                         holder.down.setVisibility(View.VISIBLE);
                         holder.right.setVisibility(View.GONE);
-                        holder.insideRecyclerView.setLayoutManager(new LinearLayoutManager(mContext));
-                        FileAdapter adap = new FileAdapter(mContext);
-                        adap.add(names, paths, isFile);
-                        holder.insideRecyclerView.setAdapter(adap);
+                        recyclerView = view.findViewById(R.id.inside_rec);
+                        recyclerView.setHasFixedSize(true);
+                        layoutManager = new LinearLayoutManager(mContext);
+                        recyclerView.setLayoutManager(layoutManager);
+                        adapter = new FileAdapter(mContext);
+                        adapter.add(names, paths, isFile);
+                        recyclerView.setAdapter(adapter);
                     }
                     else if (holder.right.getVisibility() == View.GONE && holder.down.getVisibility() == View.VISIBLE) {
                         names.clear();
@@ -102,21 +114,24 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.FileViewHolder
                         isFile.clear();
                         holder.down.setVisibility(View.GONE);
                         holder.right.setVisibility(View.VISIBLE);
-                        holder.insideRecyclerView.setLayoutManager(new LinearLayoutManager(mContext));
-                        FileAdapter adap = new FileAdapter(mContext);
-                        adap.add(names, paths, isFile);
-                        holder.insideRecyclerView.setAdapter(adap);
+                        recyclerView = view.findViewById(R.id.inside_rec);
+                        recyclerView.setHasFixedSize(true);
+                        layoutManager = new LinearLayoutManager(mContext);
+                        recyclerView.setLayoutManager(layoutManager);
+                        adapter = new FileAdapter(mContext);
+                        adapter.add(names, paths, isFile);
+                        recyclerView.setAdapter(adapter);
                     }
                     else if (holder.right.getVisibility() == View.GONE && holder.down.getVisibility() == View.GONE) {
                         System.out.println();
                     }
                 }
                 else {
-                    String x = mNames.get(pos);
+                    String x = mNames.get(position);
                     String y = x.substring(x.lastIndexOf('.')+1);
                     switch (y.toLowerCase()) {
                         case "pdf": {
-                            File file = new File(mPaths.get(pos));
+                            File file = new File(mPaths.get(position));
                             Uri uri = FileProvider.getUriForFile(mContext, mContext.getPackageName() + ".provider", file);
                             Intent intent = new Intent(Intent.ACTION_VIEW);
                             intent.setDataAndType(uri, "application/pdf");
@@ -129,7 +144,7 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.FileViewHolder
                         case "jpeg":
 
                         case "png": {
-                            File file = new File(mPaths.get(pos));
+                            File file = new File(mPaths.get(position));
                             Uri uri = FileProvider.getUriForFile(mContext, mContext.getPackageName() + ".provider", file);
                             Intent intent = new Intent(Intent.ACTION_VIEW);
                             intent.setDataAndType(uri, "image/*");
@@ -138,7 +153,7 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.FileViewHolder
                             break;
                         }
                         case "mp3": {
-                            File file = new File(mPaths.get(pos));
+                            File file = new File(mPaths.get(position));
                             Uri uri = FileProvider.getUriForFile(mContext, mContext.getPackageName() + ".provider", file);
                             Intent intent = new Intent(Intent.ACTION_VIEW);
                             intent.setDataAndType(uri, "audio/*");
@@ -147,7 +162,7 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.FileViewHolder
                             break;
                         }
                         case "mp4":
-                            File file = new File(mPaths.get(pos));
+                            File file = new File(mPaths.get(position));
                             Uri uri = FileProvider.getUriForFile(mContext, mContext.getPackageName() + ".provider", file);
                             Intent intent = new Intent(Intent.ACTION_VIEW);
                             intent.setDataAndType(uri, "video/*");
@@ -163,10 +178,6 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.FileViewHolder
         });
     }
 
-    public  void onActivityResult(int requestCode, int resultCode, Intent data) {
-
-    }
-
     @Override
     public int getItemCount() {
         return mNames.size();
@@ -176,7 +187,6 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.FileViewHolder
 
         ImageView down, right, file, folder;
         TextView name;
-        RecyclerView insideRecyclerView;
         ItemClickListener listener;
 
         public FileViewHolder(@NonNull View itemView) {
@@ -187,7 +197,6 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.FileViewHolder
             right = itemView.findViewById(R.id.right_img);
             file = itemView.findViewById(R.id.file);
             folder = itemView.findViewById(R.id.folder);
-            insideRecyclerView = itemView.findViewById(R.id.inside_rec);
         }
 
         public void setListener(ItemClickListener listener) {

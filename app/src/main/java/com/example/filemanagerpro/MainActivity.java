@@ -1,6 +1,5 @@
 package com.example.filemanagerpro;
 
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -8,11 +7,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.Manifest;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Environment;
-import android.view.View;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -21,13 +18,6 @@ public class MainActivity extends AppCompatActivity {
 
     private RecyclerView mList;
     private FileAdapter adapter;
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        adapter.onActivityResult(requestCode, resultCode, data);
-    }
-
     private ArrayList<String> mNames, mPaths;
     private ArrayList<Boolean> mIsFile;
 
@@ -48,7 +38,16 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void declare() {
+        /*
         mList.setLayoutManager(new LinearLayoutManager(this));
+        adapter.add(mNames, mPaths, mIsFile);
+        mList.setAdapter(adapter);
+
+
+         */
+        mList.setHasFixedSize(true);
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
+        mList.setLayoutManager(layoutManager);
         adapter.add(mNames, mPaths, mIsFile);
         mList.setAdapter(adapter);
     }
@@ -66,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
         for (File file : files) {
             if (file.getName().charAt(0) != '.') {
                 mNames.add(file.getName());
-                mPaths.add(file.getAbsolutePath());
+                mPaths.add(file.getPath());
                 if ((new File(mPaths.get(mPaths.size() - 1))).isFile()) {
                     mIsFile.add(true);
                 }

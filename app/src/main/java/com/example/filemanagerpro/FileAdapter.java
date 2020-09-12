@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -13,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class FileAdapter extends RecyclerView.Adapter<FileAdapter.FileViewHolder> {
 
@@ -44,14 +46,15 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.FileViewHolder
     }
 
     @Override
-    public void onBindViewHolder(@NonNull final FileViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull final FileViewHolder holder, final int position) {
         String n = mNames.get(position);
         holder.name.setText(n);
-
+        /*
         if (mIsFile.get(position)) {
             System.out.println(mNames.get(position));
             holder.right.setVisibility(View.GONE);
         }
+         */
         System.out.println("---");
         for (boolean b : mIsFile)
             System.out.println("F " + b);
@@ -61,6 +64,10 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.FileViewHolder
             public void onClick(View view, int pos) {
                 File newFile = new File(mPaths.get(pos));
                 if (newFile.isDirectory()) {
+                    if (Objects.requireNonNull(newFile.listFiles()).length == 0) {
+                        Toast.makeText(mContext, "empty", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
                     File[] folder = newFile.listFiles();
                     ArrayList<String> names = new ArrayList<>();
                     ArrayList<String> paths = new ArrayList<>();
@@ -99,6 +106,9 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.FileViewHolder
                     else if (holder.right.getVisibility() == View.GONE && holder.down.getVisibility() == View.GONE) {
                         System.out.println();
                     }
+                }
+                else {
+                    Toast.makeText(mContext, mNames.get(pos), Toast.LENGTH_SHORT).show();
                 }
             }
         });

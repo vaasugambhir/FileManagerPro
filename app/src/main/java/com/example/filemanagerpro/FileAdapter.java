@@ -8,8 +8,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.io.File;
 import java.util.ArrayList;
 
 public class FileAdapter extends RecyclerView.Adapter<FileAdapter.FileViewHolder> {
@@ -36,8 +38,49 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.FileViewHolder
     }
 
     @Override
-    public void onBindViewHolder(@NonNull FileViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull final FileViewHolder holder, int position) {
         holder.name.setText(mNames.get(position));
+
+        if (new File(mPaths.get(position)).isFile()) {
+            holder.right.setVisibility(View.GONE);
+        }
+        holder.setListener(new MainActivity.ItemClickListener() {
+            @Override
+            public void onClick(View view, int pos) {
+                File newFile = new File(mPaths.get(pos));
+                if (newFile.isDirectory()) {
+                    File[] folder = newFile.listFiles();
+                    ArrayList<String> names = new ArrayList<>();
+                    ArrayList<String> paths = new ArrayList<>();
+                    assert folder != null;
+                    for (File file : folder) {
+                        names.add(file.getName());
+                        paths.add(file.getAbsolutePath());
+                    }
+                    if (holder.down.getVisibility() == View.GONE && holder.right.getVisibility() == View.VISIBLE) {
+                        holder.down.setVisibility(View.VISIBLE);
+                        holder.right.setVisibility(View.GONE);
+                        holder.insideRecyclerView.setLayoutManager(new LinearLayoutManager(mContext));
+                        FileAdapter adap = new FileAdapter(mContext);
+                        adap.add(names, paths);
+                        holder.insideRecyclerView.setAdapter(adap);
+                    }
+                    else if (holder.right.getVisibility() == View.GONE && holder.down.getVisibility() == View.VISIBLE) {
+                        names.clear();
+                        paths.clear();
+                        holder.down.setVisibility(View.GONE);
+                        holder.right.setVisibility(View.VISIBLE);
+                        holder.insideRecyclerView.setLayoutManager(new LinearLayoutManager(mContext));
+                        FileAdapter adap = new FileAdapter(mContext);
+                        adap.add(names, paths);
+                        holder.insideRecyclerView.setAdapter(adap);
+                    }
+                    else if (holder.right.getVisibility() == View.GONE && holder.down.getVisibility() == View.GONE) {
+                        System.out.println();
+                    }
+                }
+            }
+        });
     }
 
     @Override
@@ -45,10 +88,12 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.FileViewHolder
         return mNames.size();
     }
 
-    public static class FileViewHolder extends RecyclerView.ViewHolder {
+    public static class FileViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         ImageView down, right;
         TextView name;
+        RecyclerView insideRecyclerView;
+        MainActivity.ItemClickListener listener;
 
         public FileViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -56,6 +101,17 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.FileViewHolder
             name = itemView.findViewById(R.id.file_folder_name);
             down = itemView.findViewById(R.id.down_img);
             right = itemView.findViewById(R.id.right_img);
+            insideRecyclerView = itemView.findViewById(R.id.inside_rec);
+        }
+
+        public void setListener(MainActivity.ItemClickListener listener) {
+            this.listener = listener;
+            itemView.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View v) {
+            listener.onClick(v, getAdapterPosition());
         }
     }
 }

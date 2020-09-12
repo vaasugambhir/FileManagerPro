@@ -10,6 +10,7 @@ import android.Manifest;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Environment;
+import android.view.View;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -19,6 +20,10 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView mList;
     private FileAdapter adapter;
     private ArrayList<String> mNames, mPaths;
+
+    interface ItemClickListener{
+        void onClick(View view, int pos);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

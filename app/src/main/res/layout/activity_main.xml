@@ -6,14 +6,14 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="10dp"
-    android:background="#000832"
+    android:background="#00051E"
     tools:context=".MainActivity">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="File Manager"
-        android:textColor="@android:color/holo_blue_bright"
+        android:textColor="@android:color/holo_blue_dark"
         android:textSize="25sp"
         android:padding="10dp"
         app:layout_constraintBottom_toBottomOf="parent"

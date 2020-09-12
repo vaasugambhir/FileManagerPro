@@ -21,8 +21,6 @@ public class MainActivity extends AppCompatActivity {
     private FileAdapter adapter;
     private ArrayList<String> mNames, mPaths;
 
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

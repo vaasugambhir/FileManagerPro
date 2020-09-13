@@ -62,11 +62,6 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.FileViewHolder
     }
 
     @Override
-    public int getItemViewType(int position) {
-        return super.getItemViewType(position);
-    }
-
-    @Override
     public void onBindViewHolder(@NonNull final FileViewHolder holder, final int position) {
         holder.setIsRecyclable(false);
         String n = mNames.get(position);

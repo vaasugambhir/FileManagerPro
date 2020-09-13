@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="10dp"
+    android:foreground="?attr/selectableItemBackgroundBorderless"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/layer1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:foreground="?attr/selectableItemBackgroundBorderless"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="20sp"
+            android:layout_height="20sp"
+            android:layout_gravity="center"
+            android:id="@+id/right_img1"
+            android:paddingRight="10dp"
+            android:src="@drawable/right"/>
+
+        <ImageView
+            android:layout_width="20sp"
+            android:layout_height="20sp"
+            android:paddingRight="10dp"
+            android:layout_gravity="center"
+            android:id="@+id/down_img1"
+            android:visibility="gone"
+            android:src="@drawable/down"/>
+
+        <ImageView
+            android:layout_width="20sp"
+            android:layout_height="20sp"
+            android:layout_gravity="center"
+            android:id="@+id/folder1"
+            android:visibility="visible"
+            android:src="@drawable/folder"/>
+
+        <ImageView
+            android:layout_width="20sp"
+            android:layout_height="20sp"
+            android:layout_gravity="center"
+            android:id="@+id/file1"
+            android:visibility="gone"
+            android:src="@drawable/file"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/file_folder_name1"
+            android:textColor="@android:color/white"
+            android:layout_gravity="center"
+            android:textSize="20sp"
+            android:paddingLeft="10dp"
+            android:text="File/Folder"/>
+
+    </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/inside_rec1"
+        android:layout_width="match_parent"
+        android:paddingLeft="20dp"
+        android:layout_height="wrap_content" />
+
+</LinearLayout>

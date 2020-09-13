@@ -1,5 +1,6 @@
 package com.example.filemanagerpro;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -7,6 +8,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Environment;
@@ -15,6 +17,7 @@ import android.widget.Toast;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity implements OptionsDialog.OptionsDialogListener, RenameDialog.OnClick {
 
@@ -38,7 +41,6 @@ public class MainActivity extends AppCompatActivity implements OptionsDialog.Opt
         getFiles();
         declare();
     }
-
 
 
     private void declare() {
@@ -72,23 +74,52 @@ public class MainActivity extends AppCompatActivity implements OptionsDialog.Opt
         }
     }
 
-    public boolean checkPerm (String perm) {
+    public boolean checkPerm(String perm) {
         int check = ContextCompat.checkSelfPermission(this, perm);
         return (check == PackageManager.PERMISSION_GRANTED);
     }
 
     @Override
-    public void applyX(int X, int pos, String path, String names, FileAdapter adapter) throws IOException {
+    public void applyX(int X, int pos, String path, String name, FileAdapter adapter) throws IOException {
         switch (X) {
             case 0: {
-                delete(pos, path, names, adapter);
+                delete(pos, path, name, adapter);
             }
             case 1: {
-                RenameDialog renameDialog = new RenameDialog(path, names, pos);
+                RenameDialog renameDialog = new RenameDialog(path, name, pos);
                 renameDialog.show(getSupportFragmentManager(), "rename dialog");
+            }
+            case 2: {
+                Intent intent = new Intent(this, GetPathActivity.class);
+                intent.putExtra("path", path);
+                intent.putExtra("pos", pos);
+                intent.putExtra("name", name);
+                startActivityForResult(intent, 1);
             }
         }
     }
+
+    private void move(int pos, String path, String name, String newPath) {
+
+        if (newPath.equals("")) {
+            Toast.makeText(this, "move failed", Toast.LENGTH_SHORT).show();
+        } else {
+            File oldFile = new File(path);
+            File newFile = new File(newPath);
+            newPath = newPath + "/" + name;
+            System.out.println(newPath);
+            System.out.println(path);
+            System.out.println(name);
+            if (oldFile.renameTo(newFile)) {
+                Toast.makeText(this, name + " moved to " + newPath, Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(this, "file move failed", Toast.LENGTH_SHORT).show();
+            }
+
+            adapter.notifyDataSetChanged();
+        }
+    }
+
     private void delete(int pos, String p, String n, FileAdapter adapter1) throws IOException {
         File file = new File(p);
         if (!file.exists()) {
@@ -98,8 +129,7 @@ public class MainActivity extends AppCompatActivity implements OptionsDialog.Opt
         System.out.println(n + " " + p);
         if (file.delete()) {
             Toast.makeText(this, n + " got deleted", Toast.LENGTH_SHORT).show();
-        }
-        else {
+        } else {
             Toast.makeText(this, "deletion failed", Toast.LENGTH_SHORT).show();
             throw new IOException("failed to delete " + file);
         }
@@ -117,23 +147,35 @@ public class MainActivity extends AppCompatActivity implements OptionsDialog.Opt
             File newFile = new File(newPath);
             if (oldFile.renameTo(newFile)) {
                 Toast.makeText(this, pre_name + " renamed to " + name, Toast.LENGTH_SHORT).show();
-            }
-            else {
+            } else {
                 Toast.makeText(this, "file rename failed", Toast.LENGTH_SHORT).show();
             }
-        }
-        else {
+        } else {
             String newPath = new File(oldPath).getParent() + "/" + name;
             System.out.println(oldPath);
             System.out.println(newPath);
             File newFile = new File(newPath);
             if (oldFile.renameTo(newFile)) {
                 Toast.makeText(this, pre_name + " renamed to " + name, Toast.LENGTH_SHORT).show();
-            }
-            else {
+            } else {
                 Toast.makeText(this, "file rename failed", Toast.LENGTH_SHORT).show();
             }
         }
         adapter.notifyDataSetChanged();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 1) {
+            if (resultCode == RESULT_OK) {
+                assert data != null;
+                String newPath = data.getStringExtra("path");
+                String oldPath = data.getStringExtra("oldPath");
+                String name = data.getStringExtra("name");
+                int pos = Objects.requireNonNull(data.getExtras()).getInt("pos");
+                move(pos, oldPath, name, newPath);
+            }
+        }
     }
 }

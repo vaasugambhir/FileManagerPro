@@ -26,7 +26,7 @@
         android:layout_height="wrap_content"
         android:background="@android:color/darker_gray"
         android:foreground="?attr/selectableItemBackgroundBorderless"
-        android:text="move to" />
+        android:text="copy to" />
 
     <Button
         android:id="@+id/button_3"
@@ -34,6 +34,6 @@
         android:layout_height="wrap_content"
         android:background="@android:color/darker_gray"
         android:foreground="?attr/selectableItemBackgroundBorderless"
-        android:text="copy to" />
+        android:text="move to" />
 
 </LinearLayout>

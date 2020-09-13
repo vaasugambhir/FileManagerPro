@@ -15,7 +15,12 @@ import android.os.Environment;
 import android.widget.Toast;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -102,23 +107,29 @@ public class MainActivity extends AppCompatActivity implements OptionsDialog.Opt
         }
     }
 
-    private void move(int pos, String path, String name, String newPath) {
+    private void copy(int pos, String path, String name, String newPath) throws IOException {
         if (newPath.equals("")) {
             Toast.makeText(this, "move failed", Toast.LENGTH_SHORT).show();
-        } else {
+        } else if (new File(path).exists()) {
             File oldFile = new File(path);
             File newFile = new File(newPath);
-            newPath = newPath + "/" + name;
-            System.out.println(newPath);
-            System.out.println(path);
-            System.out.println(name);
-            if (oldFile.renameTo(newFile)) {
-                Toast.makeText(this, name + " moved to " + newPath, Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(this, "file move failed", Toast.LENGTH_SHORT).show();
+            InputStream in = new FileInputStream(oldFile);
+            OutputStream out = new FileOutputStream(newFile);
+
+            byte[] buf = new byte[1024];
+            int len;
+
+            while ((len = in.read(buf)) > 0) {
+                out.write(buf, 0, len);
             }
 
+            in.close();
+            out.close();
             adapter.notifyDataSetChanged();
+            Toast.makeText(this, name + " copied to " + newPath, Toast.LENGTH_SHORT).show();
+        }
+        else {
+            Toast.makeText(this, "copy failed", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -178,7 +189,11 @@ public class MainActivity extends AppCompatActivity implements OptionsDialog.Opt
                 String name = data.getStringExtra("name");
                 int pos = Objects.requireNonNull(data.getExtras()).getInt("pos");
 
-                move(pos, oldPath, name, newPath);
+                try {
+                    copy(pos, oldPath, name, newPath);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }

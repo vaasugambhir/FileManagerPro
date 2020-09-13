@@ -107,10 +107,26 @@ public class MainActivity extends AppCompatActivity implements OptionsDialog.Opt
         }
     }
 
-    private void copy(int pos, String path, String name, String newPath) throws IOException {
+    private void move(int pos, String path, String name, String newPath) throws IOException {
         if (newPath.equals("")) {
             Toast.makeText(this, "move failed", Toast.LENGTH_SHORT).show();
-        } else if (new File(path).exists()) {
+        } else {
+            File oldFile = new File(path);
+            File newFile = new File(newPath);
+            newPath = newPath + "/" + name;
+            System.out.println(newPath);
+            System.out.println(path);
+            System.out.println(name);
+            if (oldFile.renameTo(newFile)) {
+                Toast.makeText(this, name + " moved to " + newPath, Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(this, "file move failed", Toast.LENGTH_SHORT).show();
+            }
+
+
+            adapter.notifyDataSetChanged();
+        }
+        if(new File(path).exists()) {
             File oldFile = new File(path);
             File newFile = new File(newPath);
             InputStream in = new FileInputStream(oldFile);
@@ -126,10 +142,7 @@ public class MainActivity extends AppCompatActivity implements OptionsDialog.Opt
             in.close();
             out.close();
             adapter.notifyDataSetChanged();
-            Toast.makeText(this, name + " copied to " + newPath, Toast.LENGTH_SHORT).show();
-        }
-        else {
-            Toast.makeText(this, "copy failed", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "works", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -190,7 +203,7 @@ public class MainActivity extends AppCompatActivity implements OptionsDialog.Opt
                 int pos = Objects.requireNonNull(data.getExtras()).getInt("pos");
 
                 try {
-                    copy(pos, oldPath, name, newPath);
+                    move(pos, oldPath, name, newPath);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

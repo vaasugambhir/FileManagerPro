@@ -84,10 +84,12 @@ public class MainActivity extends AppCompatActivity implements OptionsDialog.Opt
         switch (X) {
             case 0: {
                 delete(pos, path, name, adapter);
+                break;
             }
             case 1: {
                 RenameDialog renameDialog = new RenameDialog(path, name, pos);
                 renameDialog.show(getSupportFragmentManager(), "rename dialog");
+                break;
             }
             case 2: {
                 Intent intent = new Intent(this, GetPathActivity.class);
@@ -95,6 +97,7 @@ public class MainActivity extends AppCompatActivity implements OptionsDialog.Opt
                 intent.putExtra("pos", pos);
                 intent.putExtra("name", name);
                 startActivityForResult(intent, 1);
+                break;
             }
         }
     }
@@ -169,10 +172,12 @@ public class MainActivity extends AppCompatActivity implements OptionsDialog.Opt
         if (requestCode == 1) {
             if (resultCode == RESULT_OK) {
                 assert data != null;
+
                 String newPath = data.getStringExtra("path");
                 String oldPath = data.getStringExtra("oldPath");
                 String name = data.getStringExtra("name");
                 int pos = Objects.requireNonNull(data.getExtras()).getInt("pos");
+
                 move(pos, oldPath, name, newPath);
             }
         }

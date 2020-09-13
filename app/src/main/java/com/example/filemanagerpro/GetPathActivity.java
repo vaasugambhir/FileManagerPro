@@ -1,10 +1,14 @@
 package com.example.filemanagerpro;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Environment;
 import android.view.View;
@@ -48,6 +52,7 @@ public class GetPathActivity extends AppCompatActivity {
         mIsFile = new ArrayList<>();
         adapter = new GetAdapter(this);
 
+        check();
         getFiles();
         declare();
     }
@@ -87,5 +92,19 @@ public class GetPathActivity extends AppCompatActivity {
         mList.setLayoutManager(layoutManager);
         adapter.add(mNames, mPaths, mIsFile);
         mList.setAdapter(adapter);
+    }
+
+    public boolean checkPerm(String perm) {
+        int check = ContextCompat.checkSelfPermission(this, perm);
+        return (check == PackageManager.PERMISSION_GRANTED);
+    }
+
+    private void check() {
+        if (!checkPerm(Manifest.permission.READ_EXTERNAL_STORAGE)) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
+        }
+        if (!checkPerm(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 2);
+        }
     }
 }

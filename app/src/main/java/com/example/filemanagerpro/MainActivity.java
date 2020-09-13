@@ -100,7 +100,6 @@ public class MainActivity extends AppCompatActivity implements OptionsDialog.Opt
     }
 
     private void move(int pos, String path, String name, String newPath) {
-
         if (newPath.equals("")) {
             Toast.makeText(this, "move failed", Toast.LENGTH_SHORT).show();
         } else {

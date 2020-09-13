@@ -8,11 +8,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
-import android.view.View;
-import android.widget.Button;
 import android.widget.Toast;
 
 import java.io.File;
@@ -25,7 +22,6 @@ public class MainActivity extends AppCompatActivity implements OptionsDialog.Opt
     private FileAdapter adapter;
     private ArrayList<String> mNames, mPaths;
     private ArrayList<Boolean> mIsFile;
-    private Button[] buttons;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,12 +33,6 @@ public class MainActivity extends AppCompatActivity implements OptionsDialog.Opt
         mList = findViewById(R.id.list);
         mIsFile = new ArrayList<>();
         adapter = new FileAdapter(this);
-        buttons = new Button[4];
-        for (int i = 0; i < 4; i++) {
-            String id = "button" + i;
-            int resID = getResources().getIdentifier(id, "id", getPackageName());
-            buttons[i] = findViewById(resID);
-        }
 
         check();
         getFiles();
@@ -62,6 +52,9 @@ public class MainActivity extends AppCompatActivity implements OptionsDialog.Opt
     private void check() {
         if (!checkPerm(Manifest.permission.READ_EXTERNAL_STORAGE)) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
+        }
+        if (!checkPerm(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 2);
         }
     }
 
@@ -99,7 +92,7 @@ public class MainActivity extends AppCompatActivity implements OptionsDialog.Opt
     private void delete(int pos, String p, String n, FileAdapter adapter1) throws IOException {
         File file = new File(p);
         if (!file.exists()) {
-            Toast.makeText(this, "DNE", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "File DNE", Toast.LENGTH_SHORT).show();
             return;
         }
         System.out.println(n + " " + p);
